@@ -1,14 +1,18 @@
-﻿//using Sistema_de_Gestion_de_asistencias.Helpers;
+﻿using Sistema_de_Gestion_de_asistencias.Helpers;
 
-namespace Sistema_de_Gestion_de_asistencias.Helpers
+namespace Sistema_de_Gestion_de_asistencias
 {
     public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
+        {
+            MainMenu();
+        }
+
+        public static void MainMenu()
         {
             //var context = new Persistence.DataContext();
             Console.WriteLine("¡Bienvenido al Sistema de Asistencia!\n");
-
             bool running = true;
             while (running)
             {
@@ -28,19 +32,19 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                 switch (choice)
                 {
                     case 1:
-                        Studenthelper.ShowSubmenu();
+                        StudentHelper.ShowSubmenu();
                         break;
                     case 2:
-                        
+
                         break;
                     case 3:
-                        
+
                         break;
                     case 4:
-                        
+
                         break;
                     case 5:
-                        
+
                         break;
                     case 6:
                         running = false;
@@ -50,11 +54,14 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                         Console.WriteLine("Opción no válida");
                         break;
                 }
-            }
 
+            }
+ 
         }
+      
+
     }
+
 
 }
 
-    
