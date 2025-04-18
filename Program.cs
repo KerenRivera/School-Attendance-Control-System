@@ -35,10 +35,10 @@ namespace Sistema_de_Gestion_de_asistencias
                         StudentHelper.ShowSubmenu();
                         break;
                     case 2:
-
+                        ProfessorHelper.ShowSubmenu();
                         break;
                     case 3:
-
+                        CourseHelper.ShowSubmenu();
                         break;
                     case 4:
 
