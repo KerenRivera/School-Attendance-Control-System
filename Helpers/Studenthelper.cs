@@ -10,10 +10,13 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
     {
         public static void ShowSubmenu()
         {
-            Console.WriteLine("1. Agregar Alumno\n");
-            Console.WriteLine("2. Editar Alumno\n");
-            Console.WriteLine("3. Eliminar Alumno\n");
+            Console.Clear();
+            Console.WriteLine("------------GESTION DE ALUMNOS------------\n");
+            Console.WriteLine("1. Agregar alumno\n");
+            Console.WriteLine("2. Editar alumno\n");
+            Console.WriteLine("3. Eliminar alumno\n");
             Console.WriteLine("4. Atrás\n");
+            Console.Write("Seleccione una opción: ");
             var option = Convert.ToInt32(Console.ReadLine());
 
             switch (option)
