@@ -22,7 +22,7 @@ namespace Sistema_de_Gestion_de_asistencias
                 Console.Write("1. Gestionar estudiantes\n");
                 Console.Write("2. Gestionar maestros\n");
                 Console.Write("3. Gestionar cursos\n");
-                Console.Write("4. Registrar asistencia\n");
+                Console.Write("4. Gestionar asistencias\n");
                 Console.Write("5. Mostrar reporte de Asistencia semanal\n");
                 Console.Write("6. Salir\n");
                 Console.Write("Elige una opción: ");
@@ -41,7 +41,7 @@ namespace Sistema_de_Gestion_de_asistencias
                         CourseHelper.ShowSubmenu();
                         break;
                     case 4:
-
+                        AssistanceHelper.ShowSubmenu();
                         break;
                     case 5:
 
