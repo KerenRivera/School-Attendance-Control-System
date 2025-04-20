@@ -13,7 +13,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
     public class ProfessorHelper
     {
         public static void ShowSubmenu()
-        {
+        { 
             bool salir = false;
             do
             {
