@@ -1,38 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace Sistema_de_Gestion_de_asistencias
+
+namespace Sistema_de_Gestion_de_asistencias.Domain
 {
     [Index(nameof(Matricula), IsUnique = true)]
+    [Table("Alumnos")]
     public class Alumno : Persona
     {
-        [Key]
-        public int idPersona { get; set; }
-        [Required]
+        //[Key]
+        //public int IdPersona { get; set; }
+        public int? IdCurso { get; set; }
         public int Matricula { get; set; }
-        public int IdCurso { get; set; } //foreigh key
-        public Curso curso { get; set; }
-        public Alumno(int idPersona, string nombre, string apellido, int matricula, Curso curso) : base(idPersona, nombre, apellido)
-        {
-            Matricula = matricula;
-            this.curso = curso;
-        }
 
-        public void AgregarAlumno(Alumno alumno)
-        {
-            //hjkjkklkjli
-        }
+        //[ForeignKey("IdPersona")]
+        //public Persona Persona { get; set; } = null!; 
 
-        public void MostrarAlumno(Alumno alumno)
-        {
-            //jjbjhbjbjbiub
-        }
+        [ForeignKey("IdCurso")]
+        public Curso Curso { get; set; } = null!; 
+
+        public ICollection<Asistencia> Asistencias { get; set; } = new List<Asistencia>();  
+
+        public Alumno()
+        { }
     }
-
-   
 }

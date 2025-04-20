@@ -5,20 +5,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sistema_de_Gestion_de_asistencias
+namespace Sistema_de_Gestion_de_asistencias.Domain
 {
     public class Materia
     {
         [Key]
         public int IdMateria { get; set; }
+
         [Required]
-        [StringLength(50)]
-        public string Nombre { get; set; }
-        
-        public Materia(int idMateria, string nombre)
+        [MaxLength(50)]
+        public required string Nombre { get; set; }
+
+        public ICollection<Maestro> Maestros { get; set; } = new List<Maestro>();
+        public ICollection<AsignacionDocente> Asignaciones { get; set; } = new List<AsignacionDocente>();
+
+        public Materia()
         {
-            IdMateria = idMateria;
-            Nombre = nombre;
         }
     }
 }

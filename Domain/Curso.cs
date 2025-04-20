@@ -5,26 +5,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sistema_de_Gestion_de_asistencias
+namespace Sistema_de_Gestion_de_asistencias.Domain
 {
     public class Curso
     {
         [Key]
         public int IdCurso { get; set; }
         [Required]
-        [StringLength(25)]
-        public string Nombre { get; set; }
-        
-        public List<Alumno> Alumnos { get; private set; }
+        [MaxLength(25)]
+        public required string Nombre { get; set; }
 
-        public Curso(int idcurso, string nombre, List<Alumno> alumnos)
+        public ICollection<Alumno> Alumnos { get; set; } = new List<Alumno>();
+        public ICollection<Asistencia> Asistencias { get; set; } = new List<Asistencia>();
+        public ICollection<AsignacionDocente> Asignaciones { get; set; } = new List<AsignacionDocente>();
+
+        public Curso()
         {
-            IdCurso = idcurso;
-            Nombre = nombre;
-            Alumnos = new List<Alumno>();
         }
-
-
     }
 
 }

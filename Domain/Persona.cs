@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sistema_de_Gestion_de_asistencias
+namespace Sistema_de_Gestion_de_asistencias.Domain
 {
     public abstract class Persona
     {
@@ -14,17 +14,24 @@ namespace Sistema_de_Gestion_de_asistencias
         public int IdPersona { get; set; }
 
         [Required]
-        [StringLength(50)]
-        public string Nombre { get; set; }
+        [MaxLength(50)]
+        public required string Nombre { get; set; }
 
-        [StringLength(50)]
-        public string Apellido { get; set; }
+        [MaxLength(50)]
+        public required string Apellido { get; set; }
 
-        public Persona(int idPersona, string nombre, string apellido)
+        public Alumno? Alumno { get; set; }
+        public Maestro? Maestro { get; set; }
+
+        protected Persona(int idpersona, string nombre, string apellido)
         {
-            IdPersona = idPersona;
+            IdPersona = idpersona;
             Nombre = nombre;
             Apellido = apellido;
+        }
+
+        protected Persona()
+        {
         }
     }
 }

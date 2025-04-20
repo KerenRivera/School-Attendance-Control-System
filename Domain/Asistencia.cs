@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sistema_de_Gestion_de_asistencias
+namespace Sistema_de_Gestion_de_asistencias.Domain
 {
     public class Asistencia
     {
@@ -21,37 +22,30 @@ namespace Sistema_de_Gestion_de_asistencias
         public int IdAsistencia { get; set; }
         public int IdPersona { get; set; }
         public int IdCurso { get; set; }
-        public Alumno Alumno { get; set; }
-        public Curso Curso { get; set; }
+        [ForeignKey("IdPersona")]
+        public required Alumno Alumno { get; set; }
+        [ForeignKey("IdCurso")]
+        public required Curso Curso { get; set; }
+        [Column(TypeName = "char(1)")]
         public EstadoAsistencia Estado { get; set; }
+        public DateTime Fecha { get; set; }
 
-        public Asistencia(int idAsistencia, Alumno alumno, Curso curso, EstadoAsistencia estado)
-        {
-            IdAsistencia = idAsistencia;
-            Alumno = alumno;
-            Curso = curso;
-            Estado = estado;
-        }
+        //public Asistencia(DateTime fecha, Alumno alumno, Curso curso, EstadoAsistencia estado)
+        //{
+        //    Fecha = fecha;
+        //    Alumno = alumno;
+        //    Curso = curso;
+        //    Estado = estado;
+        //}
+        //public Asistencia(Alumno alumno, Curso curso, EstadoAsistencia estado)
+        //{
+        //    Fecha = DateTime.Now;
+        //    Alumno = alumno;
+        //    Curso = curso;
+        //    Estado = estado;
+        //}
 
-        public void ShowAttendance()
-        {
-            //jsdjbcfjbj
-        }
-
-        public void AddAttendance()
-        {
-            //jsjdkjs
-        }
-
-        public void EditAttendance()
-        { 
-            //jkfk
-        }
-
-        public void DeleteAttendance()
-        {
-            //jsdkds
-        }
-
+        public Asistencia()
+        { }
     }
 }
