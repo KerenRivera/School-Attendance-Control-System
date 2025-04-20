@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Sistema_de_Gestion_de_asistencias.Domain;
+using static Sistema_de_Gestion_de_asistencias.Domain.Maestro;
+using Sistema_de_Gestion_de_asistencias.Persistence;
 
 namespace Sistema_de_Gestion_de_asistencias.Helpers
 {
@@ -11,7 +14,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
     {
         public static void ShowSubmenu()
         {
-            int option;
+            bool salir = false;
             do
             {
                 Console.Clear();
@@ -19,9 +22,15 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                 Console.WriteLine("1. Agregar maestro\n");
                 Console.WriteLine("2. Editar maestro\n");
                 Console.WriteLine("3. Eliminar maestro\n");
-                Console.WriteLine("4. Atrás\n");
+                Console.WriteLine("4. Volver al menú principal\n");
+
                 Console.Write("Seleccione una opción: ");
-                option = Convert.ToInt32(Console.ReadLine());
+                if (!int.TryParse(Console.ReadLine(), out int option))
+                {
+                    Console.WriteLine("Entrada inválida. Presione una tecla para continuar...");
+                    Console.ReadKey();
+                    continue;
+                }
 
                 switch (option)
                 {
@@ -35,100 +44,132 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                         DeleteProfessor();
                         break;
                     case 4:
+                        salir = true;
                         Console.WriteLine("Regresando al menú principal...");
-                        Program.MainMenu();
                         break;
                     default:
                         Console.WriteLine("Opción no válida. Por favor, elija una opción válida.");
                         break;
                 }
-            } while (option != 4);
+            } while (!salir);
         }
 
         public static void AddProfessor()
         {
+            Console.Clear();
             Console.Write("Ingrese el nombre del maestro: ");
-            string nombre = Console.ReadLine();
-            Console.Write("Ingrese el apellido del maestro: ");
-            string apellido = Console.ReadLine();
-            Console.Write("Ingrese el Id de la materia que impartira: "); //corregir ortografia.
-            int idMateria = int.Parse(Console.ReadLine());
-
-            using (var context = new DdContext())
+            string? nombre = Console.ReadLine();
+            if (string.IsNullOrEmpty(nombre))
             {
-                var maestro = new Maestro
-                {
-                    Nombre = nombre,
-                    Apellido = apellido,
-                    IdMateria = idMateria
-                };
-
-                context.Maestros.Add(maestro);
-                context.SaveChanges();
-                Console.WriteLine("Maestro agregado exitosamente.");
+                Console.WriteLine("El nombre no puede estar vacío.");
+                return;
             }
-        }
+
+            Console.Write("Ingrese el apellido del maestro: ");
+            string? apellido = Console.ReadLine();
+            if (string.IsNullOrEmpty(apellido))
+            {
+                Console.WriteLine("El apellido no puede estar vacío.");
+                return;
+            }
+
+            Console.Write("Ingrese el Id de la materia que impartirá: ");
+            if (!int.TryParse(Console.ReadLine(), out int idMateria))
+            {
+                Console.WriteLine("El Id de la materia debe ser un número válido.");
+                return;
+            }
+
+            using var context = new DataContext();
+            var maestro = new Maestro
+            {
+                Nombre = nombre,
+                Apellido = apellido,
+                IdMateria = idMateria
+            };
+
+            context.Maestros.Add(maestro);
+            context.SaveChanges();
+            Console.WriteLine("Maestro agregado exitosamente.");
+            Console.WriteLine("Presione una tecla para continuar...");
+            Console.ReadKey();
+
+        } //funciona
 
         public static void EditProfessor()
         {
+            Console.Clear();
             Console.Write("Ingrese el ID del maestro a editar: ");
-            int id = int.Parse(Console.ReadLine()); //check
-
-            using (var context = new DbContext())
+            string? input = Console.ReadLine();
+            if (string.IsNullOrEmpty(input) || !int.TryParse(input, out int id))
             {
-                var maestro = context.Maestros.FirstOrDefault(m => m.IdPersona == id);
+                Console.WriteLine("El ID ingresado no es válido.");
+                return;
+            }
 
-                if (maestro == null)
+            using var context = new DataContext();
+            var maestro = context.Maestros.FirstOrDefault(m => m.IdPersona == id);
+
+            if (maestro == null)
+            {
+                Console.WriteLine("Maestro no encontrado.");
+                return;
+            }
+            else
+            {
+                Console.WriteLine($"Nombre actual: {maestro.Nombre}");
+                Console.Write("Nuevo nombre del maestro (Dejar vacío si no desea cambiarlo): ");
+                string? nuevoNombre = Console.ReadLine();
+                if (!string.IsNullOrEmpty(nuevoNombre))
                 {
-                    Console.WriteLine("maestro no encontrado.");
-                    return;
+                    maestro.Nombre = nuevoNombre;
                 }
-                else
+                Console.Write("Nuevo apellido del maestro (Dejar vacío si no desea cambiarlo): ");
+                string? nuevoApellido = Console.ReadLine();
+                if (!string.IsNullOrEmpty(nuevoApellido))
                 {
-                    Console.Write("Nuevo nombre del maestro (Dejar vacio si no desea cambiarlo): ");
-                    string nuevoNombre = Console.ReadLine();
-                    if (!string.IsNullOrEmpty(nuevoNombre))
-                    {
-                        maestro.Nombre = nuevoNombre;
-                    }
-                    Console.Write("Nuevo apellido del maestro (Dejar vacio si no desea cambiarlo): ");
-                    string nuevoApellido = Console.ReadLine();
-                    if (!string.IsNullOrEmpty(nuevoApellido))
-                    {
-                        maestro.Apellido = nuevoApellido;
-                    }
-                    Console.Write("Nuevo ID de materia (Dejar vacio si no desea cambiarlo): ");
-                    string nuevoIDCurso = Console.ReadLine();
-                    if (!string.IsNullOrEmpty(nuevoIDMateria))
-                    {
-                        maestro.IdMateria = int.Parse(nuevoIDMateria);
-                    }
-                    context.SaveChanges();
-                    Console.WriteLine("Maestro editado exitosamente.");
+                    maestro.Apellido = nuevoApellido;
                 }
+                Console.Write("Nuevo ID de materia (Dejar vacío si no desea cambiarlo): ");
+                string? nuevoIdMateria = Console.ReadLine();
+                if (!string.IsNullOrEmpty(nuevoIdMateria) && int.TryParse(nuevoIdMateria, out int idMateria))
+                {
+                    maestro.IdMateria = idMateria;
+                }
+                context.SaveChanges();
+                Console.WriteLine("Maestro editado exitosamente.");
+                Console.WriteLine("Presione una tecla para continuar...");
+                Console.ReadKey();
+
             }
         }
 
         public static void DeleteProfessor()
         {
+            Console.Clear();
             Console.Write("Ingrese el ID del maestro a eliminar: ");
-            int id = int.Parse(Console.ReadLine());
-
-            using (var context = new DbContext())
+            string? input = Console.ReadLine();
+            if (string.IsNullOrEmpty(input) || !int.TryParse(input, out int id))
             {
-                var maestro = context.Maestros.FirstOrDefault(m => m.IdPersona == id);
+                Console.WriteLine("El ID ingresado no es válido.");
+                return;
+            }
 
-                if (maestro == null)
-                {
-                    Console.WriteLine("Maestro no encontrado.");
-                    return;
-                }
-                else
-                {
-                    context.Maestros.Remove(maestro);
-                    context.SaveChanges();
-                    Console.WriteLine("Maestro eliminado exitosamente.");
-                }
+            using var context = new DataContext();
+            var maestro = context.Maestros.FirstOrDefault(m => m.IdPersona == id);
+
+            if (maestro == null)
+            {
+                Console.WriteLine("Maestro no encontrado.");
+                return;
+            }
+            else
+            {
+                context.Maestros.Remove(maestro);
+                context.SaveChanges();
+                Console.WriteLine("Maestro eliminado exitosamente.");
+                Console.WriteLine("Presione una tecla para continuar...");
+                Console.ReadKey();
             }
         }
     }

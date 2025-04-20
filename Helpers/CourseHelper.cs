@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
+using Sistema_de_Gestion_de_asistencias.Domain;
+using static Sistema_de_Gestion_de_asistencias.Domain.Curso;
+using Sistema_de_Gestion_de_asistencias.Persistence;
+using Microsoft.IdentityModel.Tokens;
+using Google.Protobuf;
 
 namespace Sistema_de_Gestion_de_asistencias.Helpers
 {
@@ -13,7 +18,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
     {
         public static void ShowSubmenu()
         {
-            int option;
+            bool salir = false;
             do
             {
                 Console.Clear();
@@ -21,9 +26,15 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                 Console.WriteLine("1. Agregar curso\n");
                 Console.WriteLine("2. Editar curso\n");
                 Console.WriteLine("3. Eliminar curso\n");
-                Console.WriteLine("4. Atrás\n");
+                Console.WriteLine("4. Volver al menú principal\n");
+
                 Console.Write("Seleccione una opción: ");
-                option = Convert.ToInt32(Console.ReadLine());
+                if (!int.TryParse(Console.ReadLine(), out int option))
+                {
+                    Console.WriteLine("Entrada inválida. Presione una tecla para continuar...");
+                    Console.ReadKey();
+                    continue;
+                }
 
                 switch (option)
                 {
@@ -37,22 +48,25 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                         DeleteCourse();
                         break;
                     case 4:
+                        salir = true;
                         Console.WriteLine("Regresando al menú principal...");
-                        Program.MainMenu();
                         break;
                     default:
                         Console.WriteLine("Opción no válida. Por favor, elija una opción válida.");
                         break;
                 }
-            } while (option != 4);
+            } while (!salir);
         }
 
         public static void AddCourse()
         {
+            Console.Clear();
             Console.WriteLine("Ingrese el nombre del curso: ");
-            string nombre = Console.ReadLine();
+            string? input = Console.ReadLine();
+            if (string.IsNullOrEmpty(input)) return;
+            string nombre = input;
 
-            using (var context = new DbContext())
+            using var context = new DataContext();
             {
                 var curso = new Curso
                 {
@@ -60,45 +74,65 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                 };
                 context.Add(curso);
                 context.SaveChanges();
-                Console.WriteLine("Curso agregado exitosamente");
+                Console.WriteLine("Curso agregado exitosamente\n");
+                Console.WriteLine("Presione una tecla para continuar...");
+                Console.ReadKey();
             }
         }
 
         public static void EditCourse()
         {
+            Console.Clear();
             Console.WriteLine("Ingrese el ID del curso a editar: ");
-            int id = int.Parse(Console.ReadLine());
-
-            using (var context = new DbContext())
+            if (!int.TryParse(Console.ReadLine(), out int id))
             {
-                var curso = context.Cursos.Find(id);
-
-                if (curso == null)
-                {
-                    Console.WriteLine("Curso no encontrado.");
-                    return;
-                }
-                Console.WriteLine("Ingrese el nuevo nombre del curso: ");
-                string nuevoNombre = Console.ReadLine();
-
-                if (!string.IsNullOrEmpty(nuevoNombre))
-                {
-                    curso.Nombre = nuevoNombre;
-                }
-
-                context.SaveChanges();
-                Console.WriteLine("Curso editado exitosamente.");
-
+                Console.WriteLine("ID inválido.");
+                return;
             }
+
+            using var context = new DataContext();
+            var curso = context.Cursos.Find(id);
+
+            if (curso == null)
+            {
+                Console.WriteLine("Curso no encontrado.");
+                return;
+            }
+
+            Console.WriteLine($"Nombre actual: {curso.Nombre}");
+            Console.WriteLine("Ingrese el nuevo nombre del curso: ");
+            string? nuevoNombre = Console.ReadLine();
+
+            if (!string.IsNullOrEmpty(nuevoNombre))
+            {
+                curso.Nombre = nuevoNombre;
+            }
+
+            context.SaveChanges();
+            Console.WriteLine("Curso editado exitosamente.\n");
+            Console.WriteLine("Presione una tecla para continuar...");
+            Console.ReadKey();
 
         }
 
         public static void DeleteCourse()
         {
+            Console.Clear();
             Console.WriteLine("Ingrese el ID del curso a eliminar: ");
-            int id = int.Parse(Console.ReadLine());
+            string? input = Console.ReadLine();
+            if (string.IsNullOrEmpty(input))
+            {
+                Console.WriteLine("ID no proporcionado.");
+                return;
+            }
 
-            using (var context = new DbContext())
+            if (!int.TryParse(input, out int id))
+            {
+                Console.WriteLine("ID inválido.");
+                return;
+            }
+
+            using var context = new DataContext();
             {
                 var curso = context.Cursos.Find(id);
                 if (curso == null)
@@ -108,10 +142,13 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                 }
                 context.Cursos.Remove(curso);
                 context.SaveChanges();
-                Console.WriteLine("Curso eliminado exitosamente.");
-            }
+                Console.WriteLine("Curso eliminado exitosamente.\n");
+                Console.WriteLine("Presione una tecla para continuar...");
+                Console.ReadKey();
 
+            }
         }
+    }
 }
         
   
