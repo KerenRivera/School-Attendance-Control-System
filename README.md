@@ -3,7 +3,7 @@
 ¿Qué es?
 
 Es un sistema para controlar las asistencias de estudiantes, profesores y posiblemente hasta fantasmas si se cuelan en la base de datos.
-Hecho con Entity Framework Core, C# y estrés.
+Hecho con Entity Framework Core, C#, Docker, Azure Data Studio y estrés.
 
 Funcionalidades
 
