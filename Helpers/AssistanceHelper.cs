@@ -68,8 +68,10 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                 Console.WriteLine("Entrada inválida. Por favor, ingrese un número válido.");
                 return;
             }
+
             using var context = new DataContext() ;
             var alumno = context.Alumnos.Include(a => a.Curso).FirstOrDefault(a => a.Matricula == matricula);
+
             if (alumno == null)
             {
                 Console.WriteLine("Alumno no encontrado");
@@ -106,7 +108,14 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                     .Include(a => a.Curso)
                     .ToList();
 
-                foreach (var a in asistencias)
+                if (!asistencias.Any())
+                {
+                    Console.WriteLine("No hay asistencias registradas.");
+                    Program.Pausar();
+                    return;
+                }
+
+                    foreach (var a in asistencias)
                 {
                     Console.WriteLine($"Alumno: {a.Alumno.Nombre} {a.Alumno.Apellido} | Curso: {a.Curso.Nombre} | Estado: {a.Estado} | Fecha: {a.Fecha}");
                 }
@@ -137,7 +146,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
 
             if (!asistencias.Any())
             {
-                Console.WriteLine("No se encontraron asistencias para el estudiante con la matricula ingresada.");
+                Console.WriteLine("Este estudiante aún no tiene asistencias registradas.");
                 return;
             }
 
@@ -185,7 +194,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
 
             if (!asistencias.Any())
             {
-                Console.WriteLine("No se encontraron asistencias para ese estudiante.");
+                Console.WriteLine("Este estudiante aún no tiene asistencias registradas.");
                 return;
             }
 

@@ -113,7 +113,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             }
 
 
-            Console.Write("Horario (yyyy-MM-dd HH:mm): ");
+            Console.Write("Horario (dd/MM-yyyy HH:mm): ");
             if (!DateTime.TryParse(Console.ReadLine(), out DateTime horario))
             {
                 Console.WriteLine("Horario no válido.");
@@ -180,7 +180,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                 switch (opcionFiltro)
                 {
                     case 1:
-                        Console.Write("Ingrese la fecha (yyyy-MM-dd): ");
+                        Console.Write("Ingrese la fecha (dd/MM/yyyy): ");
                         string? inputFecha = Console.ReadLine();
                         if (!DateTime.TryParse(inputFecha, out var fecha))
                         {
@@ -285,7 +285,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             }
 
             Console.WriteLine($"Editando la clase del maestro {clase.Maestro.Nombre} {clase.Maestro.Apellido}");
-            Console.WriteLine($"Horario actual: {clase.Horario:yyyy-MM-dd hh:mm}");
+            Console.WriteLine($"Horario actual: {clase.Horario:dd/MM/yyyy hh:mm}");
             Console.Write("Nuevo horario (Presione la tecla enter para mantener el horario actual): ");
             var inpHorario = Console.ReadLine();
 

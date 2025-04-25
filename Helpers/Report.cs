@@ -49,7 +49,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
         public static void WeeklyAssisttanceReport()
         {
             Console.WriteLine("----- Reporte Semanal de Asistencia -----");
-            Console.Write("Ingrese fecha de inicio (yyyy-MM-dd): ");
+            Console.Write("Ingrese fecha de inicio (dd/MM/yyyy): ");
 
             string? input = Console.ReadLine();
             if (!DateTime.TryParse(input, out DateTime inicio))
@@ -62,10 +62,10 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
 
             using var context = new DataContext();
             {
+                Console.WriteLine($"Reporte desde {inicio:dd/MM/yyyy} hasta {fin:dd/MM/yyyy}");
                 var asistencias = context.Asistencias
                     .Include(a => a.Alumno)
                     .Include(a => a.Curso)
-                    .Include(a => a.Estado)
                     .Where(a => a.Fecha >= inicio && a.Fecha <= fin)
                     .ToList();
 
@@ -90,10 +90,9 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                         int total = estudiante.Count();
                         int asistenciasOk = estudiante.Count(a => a.Estado == Asistencia.EstadoAsistencia.Presente);
                         Console.WriteLine($"Alumno: {estudiante.Key?.Nombre} {estudiante.Key?.Apellido} - {asistenciasOk}/{total} asistencias");
-                        Console.WriteLine("\nPresione una tecla para continuar...");
-                        Console.ReadKey();
-                    }
+                    }                    
                 }
+                Program.Pausar();
             }
         }
     }
