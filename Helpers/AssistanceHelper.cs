@@ -18,11 +18,13 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             bool salir = false;
             do
             {
-                Console.Clear();
+                //Console.Clear();
                 Console.WriteLine("------------GESTION DE ASISTENCIAS------------\n");
                 Console.WriteLine("1. Registrar Asistencia\n");
                 Console.WriteLine("2. Visualizar el historial de asistencias\n");
-                Console.WriteLine("3. Volver al menú principal\n");
+                Console.WriteLine("3. Editar Asistencia\n");
+                Console.WriteLine("4. Eliminar Asistencia\n");
+                Console.WriteLine("5. Volver al menú principal\n");
                 Console.Write("Seleccione una opción: ");
 
                 if (!int.TryParse(Console.ReadLine(), out int option))
@@ -40,6 +42,12 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                         ViewAssistanceHistory();
                         break;
                     case 3:
+                        EditAssistance();
+                        break;
+                    case 4:
+                        DeleteAssistance();
+                        break;
+                    case 5:
                         salir = true;
                         Console.WriteLine("Regresando al menú principal");
                         break;
@@ -53,6 +61,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
 
         public static void AddAssistance()
         {
+            Console.Clear();
             Console.WriteLine("Ingrese la matricula del estudiante que desea registrar");
             if (!int.TryParse(Console.ReadLine(), out int matricula))
             {
@@ -66,42 +75,10 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                 Console.WriteLine("Alumno no encontrado");
                 return;
             }
-            Console.WriteLine("Seleccione el estado de asistencia: \n");
-            Console.WriteLine("P - Presente");
-            Console.WriteLine("A - Ausente");
-            Console.WriteLine("E - Excusa");
-            Console.WriteLine("T - Tarde");
-            //char estadoAnswer = Convert.ToChar(Console.ReadLine());
-            char? estadoAnswerInput = Console.ReadLine()?.FirstOrDefault();
-            if (estadoAnswerInput == null)
-            {
-                Console.WriteLine("Entrada inválida. Por favor, ingrese un carácter válido.");
-                return;
-            }
-            char estadoAnswer = estadoAnswerInput.Value;
 
-            EstadoAsistencia estado;
+            if (TryGetEstado(out EstadoAsistencia estado)) return;
 
-            switch (estadoAnswer)
-            {
-                case 'P':
-                    estado = EstadoAsistencia.Presente;
-                    break;
-                case 'A':
-                    estado = EstadoAsistencia.Ausente;
-                    break;
-                case 'E':
-                    estado = EstadoAsistencia.Excusa;
-                    break;
-                case 'T':
-                    estado = EstadoAsistencia.Tarde;
-                    break;
-                default:
-                    Console.WriteLine("Opción inválida.");
-                    return;
-            }
-
-            var nuevaAsistencia = new Asistencia 
+            var nuevaAsistencia = new Asistencia
             {
                 IdPersona = alumno.IdPersona,
                 IdCurso = (int)alumno.IdCurso,
@@ -110,16 +87,18 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                 Estado = estado,
                 Fecha = DateTime.Now
             };
+
             context.Asistencias.Add(nuevaAsistencia);
             context.SaveChanges();
+
             Console.WriteLine("Asistencia registrada exitosamente.\n");
-            Console.WriteLine("Presione una tecla para continuar...");
-            Console.ReadKey();
+            Program.Pausar();
 
         }
 
         public static void ViewAssistanceHistory()
         {
+            Console.Clear();
             using var context = new DataContext();
             {
                 var asistencias = context.Asistencias
@@ -137,5 +116,117 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
 
             }
         }
+
+        public static void EditAssistance()
+        {
+            Console.Clear();
+            Console.WriteLine("Ingrese la matricula del estudiante que desea editar: ");
+
+            if (!int.TryParse(Console.ReadLine(), out int matricula))
+            {
+                Console.WriteLine("Matricula inválida.");
+                return;
+            }
+
+            using var context = new DataContext();
+            var asistencias = context.Asistencias
+                .Include(a => a.Alumno)
+                .Include(a => a.Curso)
+                .Where(a => a.Alumno.Matricula == matricula)
+                .ToList();
+
+            if (!asistencias.Any())
+            {
+                Console.WriteLine("No se encontraron asistencias para el estudiante con la matricula ingresada.");
+                return;
+            }
+
+            for (int i = 0; i < asistencias.Count; i++)
+            {
+                var a = asistencias[i];
+                Console.WriteLine($"{i + 1}. Alumno: {a.Alumno.Nombre} {a.Alumno.Apellido} | Curso: {a.Curso.Nombre} | Estado: {a.Estado} | Fecha: {a.Fecha}");
+            }
+
+            Console.WriteLine("Seleccione el número de la asistencia que desea editar: ");
+            if (!int.TryParse(Console.ReadLine(), out int asistenciaIndex) || asistenciaIndex < 1 || asistenciaIndex > asistencias.Count)
+            {
+                Console.WriteLine("Número de asistencia inválido.");
+                return;
+            }
+
+            var asistenciaSeleccionada = asistencias[asistenciaIndex - 1];
+            if (!TryGetEstado(out EstadoAsistencia nuevoEstado)) return;
+
+            asistenciaSeleccionada.Estado = nuevoEstado;
+            context.SaveChanges();
+
+            Console.WriteLine("Asistencia editada exitosamente.");
+            Program.Pausar();
+
+        }
+
+        public static void DeleteAssistance()
+        {
+            Console.Clear();
+            Console.WriteLine("Ingrese la matricula del estudiante que desea eliminar: ");
+            if (!int.TryParse(Console.ReadLine(), out int matricula))
+            {
+                Console.WriteLine("Matricula inválida.");
+                return;
+            }
+
+            using var context = new DataContext();
+            var asistencias = context.Asistencias
+                .Include(a => a.Alumno)
+                .Include(a => a.Curso)
+                .Where(a => a.Alumno.Matricula == matricula)
+                .ToList();
+
+
+            if (!asistencias.Any())
+            {
+                Console.WriteLine("No se encontraron asistencias para ese estudiante.");
+                return;
+            }
+
+
+            for (int i = 0; i < asistencias.Count; i++)
+            {
+                var a = asistencias[i];
+                Console.WriteLine($"{i + 1}.| Curso: {a.Curso.Nombre} | Estado: {a.Estado} | Fecha: {a.Fecha}");
+            }
+
+
+            Console.WriteLine("Seleccione el número de la asistencia que desea eliminar: ");
+            if (!int.TryParse(Console.ReadLine(), out int asistenciaIndex) || asistenciaIndex < 1 || asistenciaIndex > asistencias.Count)
+            {
+                Console.WriteLine("Número de asistencia inválido.");
+                return;
+            }
+
+            var asistenciaSeleccionada = asistencias[asistenciaIndex - 1];
+            context.Asistencias.Remove(asistenciaSeleccionada);
+            context.SaveChanges();
+
+            Console.WriteLine("Asistencia eliminada exitosamente.");
+            Program.Pausar();
+        }
+
+        public static bool TryGetEstado(out EstadoAsistencia estado)
+        {
+            estado = default;
+            Console.WriteLine("Seleccione el estado de asistencia: [P] Presente | [A] Ausente | [E] Excusa | [T] Tarde");
+            char? input = Console.ReadLine()?.ToUpper().FirstOrDefault();
+
+            switch (input)
+            {
+                case 'P': estado = EstadoAsistencia.Presente; return true;
+                case 'A': estado = EstadoAsistencia.Ausente; return true;
+                case 'E': estado = EstadoAsistencia.Excusa; return true;
+                case 'T': estado = EstadoAsistencia.Tarde; return true;
+                default: Console.WriteLine("Entrada inválida."); return false;
+            }
+        }
+
     }
 }

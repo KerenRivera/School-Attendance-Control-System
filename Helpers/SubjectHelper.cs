@@ -12,6 +12,51 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
 {
     public class SubjectHelper
     {
+        public static void ShowSubmenu()
+        {
+            bool salir = false;
+            do
+            {
+                Console.WriteLine("------------GESTION DE MATERIAS------------\n");
+                Console.WriteLine("1. Agregar materia\n");
+                Console.WriteLine("2. Ver materias\n");
+                Console.WriteLine("3. Editar materia\n");
+                Console.WriteLine("4. Eliminar materia\n");
+                Console.WriteLine("5. Volver al menú principal\n");
+
+                Console.Write("Seleccione una opción: ");
+                if (!int.TryParse(Console.ReadLine(), out int option))
+                {
+                    Console.WriteLine("Entrada inválida. Presione una tecla para continuar...");
+                    Console.ReadKey();
+                    continue;
+                }
+
+                switch (option)
+                {
+                    case 1:
+                        AddSubject();
+                        break;
+                    case 2:
+                        ReadSubject();
+                        break;
+                    case 3:
+                        EditSubject();
+                        break;
+                    case 4:
+                        DeleteSubject();
+                        break;
+                    case 5:
+                        salir = true;
+                        Console.WriteLine("Regresando al menú principal...");
+                        break;
+                    default:
+                        Console.WriteLine("Opción no válida. Por favor, elija una opción válida.");
+                        break;
+                }
+            } while (!salir);
+        }
+
         public static void AddSubject()
         {
             Console.WriteLine("Nombre de la nueva materia: ");
@@ -25,19 +70,113 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             }
 
             using var context = new DataContext();
+
             if (context.Materias.Any(m => m.Nombre.ToLower() == nombre.ToLower()))
             {
                 Console.WriteLine("Ya existe una materia con ese nombre.");
                 return;
             }
-            
+
             var nuevaMateria = new Materia { Nombre = nombre };
             context.Materias.Add(nuevaMateria);
             context.SaveChanges();
             Console.WriteLine($"Materia '{nombre}' agregada exitosamente.");
             Console.WriteLine("Presione una tecla para continuar...");
             Console.ReadKey();
-            
+
+        }
+
+        public static void ReadSubject()
+        {
+            using var context = new DataContext();
+
+            var materias = context.Materias.ToList();
+            if (materias.Count == 0)
+            {
+                Console.WriteLine("No hay materias registradas.");
+                return;
+            }
+            Console.WriteLine("Lista de materias:");
+            foreach (var materia in materias)
+            {
+                Console.WriteLine($"ID: {materia.IdMateria}, Nombre: {materia.Nombre}");
+            }
+            Console.WriteLine("Presione una tecla para continuar...");
+            Console.ReadKey();
+        }
+
+        public static void EditSubject()
+        {
+            ReadSubject();
+            Console.Write("Ingrese el ID de la materia a editar: ");
+
+            if (!int.TryParse(Console.ReadLine(), out int id))
+            {
+                Console.WriteLine("El ID ingresado no es válido.");
+                return;
+            }
+
+            using var context = new DataContext();
+
+            var materia = context.Materias.Find(id);
+            if (materia == null)
+            {
+                Console.WriteLine("Materia no encontrada.");
+                return;
+            }
+            Console.Write("Ingrese el nuevo nombre de la materia: ");
+            string? nuevoNombre = Console.ReadLine();
+
+            if (string.IsNullOrEmpty(nuevoNombre))
+            {
+                Console.WriteLine("El nombre no puede estar vacío.");
+                return;
+            }
+            materia.Nombre = nuevoNombre;
+            context.SaveChanges();
+            Console.WriteLine($"Materia '{nuevoNombre}' editada exitosamente.");
+            Console.WriteLine("Presione una tecla para continuar...");
+            Console.ReadKey();
+        }
+
+        public static void DeleteSubject()
+        {
+            using var context = new DataContext();
+            var materias = context.Materias.ToList();
+
+            Console.WriteLine("Ingrese el ID de la materia a eliminar: ");
+            if (int.TryParse(Console.ReadLine(),out int id))
+            {                              
+                var materia = context.Materias.Find(id);
+
+                if (materia == null)
+                {
+                    Console.WriteLine("Materia no encontrada.");
+                    return;
+                }
+                Console.WriteLine($"¿Está seguro de que desea eliminar la materia '{materia.Nombre}'? (S/N): ");
+                string? confirmacion = Console.ReadLine();
+                if (confirmacion?.ToUpper() == "S")
+                {
+                    context.Materias.Remove(materia);
+                    context.SaveChanges();
+                    Console.WriteLine($"Materia '{materia.Nombre}' eliminada exitosamente.");
+                }
+                else
+                {
+                    Console.WriteLine("Eliminación cancelada.");
+                }
+                Program.Pausar();
+            }
         }
     }
 }
+
+
+
+
+    
+
+
+
+

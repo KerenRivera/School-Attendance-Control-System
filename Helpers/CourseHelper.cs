@@ -21,12 +21,12 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             bool salir = false;
             do
             {
-                Console.Clear();
                 Console.WriteLine("------------GESTION DE CURSOS------------\n");
                 Console.WriteLine("1. Agregar curso\n");
-                Console.WriteLine("2. Editar curso\n");
-                Console.WriteLine("3. Eliminar curso\n");
-                Console.WriteLine("4. Volver al menú principal\n");
+                Console.WriteLine("2. Ver cursos\n");
+                Console.WriteLine("3. Editar curso\n");
+                Console.WriteLine("4. Eliminar curso\n");
+                Console.WriteLine("5. Volver al menú principal\n");
 
                 Console.Write("Seleccione una opción: ");
                 if (!int.TryParse(Console.ReadLine(), out int option))
@@ -39,15 +39,18 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                 switch (option)
                 {
                     case 1:
-                        AddCourse();
+                        AddCourse(); 
                         break;
                     case 2:
-                        EditCourse();
+                        ReadCourses(); 
                         break;
                     case 3:
-                        DeleteCourse();
+                        EditCourse();  
                         break;
                     case 4:
+                        DeleteCourse();  
+                        break;
+                    case 5:
                         salir = true;
                         Console.WriteLine("Regresando al menú principal...");
                         break;
@@ -62,36 +65,74 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
         {
             Console.Clear();
             Console.WriteLine("Ingrese el nombre del curso: ");
-            string? input = Console.ReadLine();
-            if (string.IsNullOrEmpty(input)) return;
-            string nombre = input;
+            var nombre = Console.ReadLine();
+
+            if (string.IsNullOrEmpty(nombre))
+            {
+                Console.WriteLine("El nombre del curso no puede estar vacio");
+                return;
+            }
 
             using var context = new DataContext();
+
+            if (context.Cursos.Any(c => c.Nombre.ToLower() == nombre.ToLower()))
             {
-                var curso = new Curso
-                {
-                    Nombre = nombre
-                };
-                context.Add(curso);
-                context.SaveChanges();
-                Console.WriteLine("Curso agregado exitosamente\n");
-                Console.WriteLine("Presione una tecla para continuar...");
-                Console.ReadKey();
+                Console.WriteLine("El curso ya existe.");
+                return;
             }
+
+            var nuevoCurso = new Curso
+            {
+                Nombre = nombre
+            };
+
+            context.Add(nuevoCurso);
+            context.SaveChanges();
+            Console.WriteLine("Curso agregado exitosamente\n");
+            Program.Pausar();
+        }
+
+        public static void ReadCourses()
+        {
+            Console.Clear();
+            using var context = new DataContext();
+
+            var cursos = context.Cursos.ToList();
+
+            if (cursos.Count == 0)
+            {
+                Console.WriteLine("No hay cursos disponibles.");
+                return;
+            }
+            Console.WriteLine("Lista de cursos:");
+            foreach (var curso in cursos)
+            {
+                Console.WriteLine($"ID: {curso.IdCurso}, Nombre: {curso.Nombre}");
+            }
+
+            Program.Pausar();
         }
 
         public static void EditCourse()
         {
             Console.Clear();
+            using var context = new DataContext();
+            var cursos = context.Cursos.ToList();
+
+            if (cursos.Count == 0)
+            {
+                Console.WriteLine("No hay cursos disponibles.");
+                return;
+            }
+
             Console.WriteLine("Ingrese el ID del curso a editar: ");
-            if (!int.TryParse(Console.ReadLine(), out int id))
+            if (!int.TryParse(Console.ReadLine(), out int idCurso))
             {
                 Console.WriteLine("ID inválido.");
                 return;
             }
 
-            using var context = new DataContext();
-            var curso = context.Cursos.Find(id);
+            var curso = context.Cursos.FirstOrDefault(c => c.IdCurso == idCurso);
 
             if (curso == null)
             {
@@ -100,8 +141,8 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             }
 
             Console.WriteLine($"Nombre actual: {curso.Nombre}");
-            Console.WriteLine("Ingrese el nuevo nombre del curso: ");
-            string? nuevoNombre = Console.ReadLine();
+            Console.WriteLine("Ingrese el nuevo nombre del curso: (Presione la tecla Enter para mantener el nombre actual)) ");
+            var nuevoNombre = Console.ReadLine();
 
             if (!string.IsNullOrEmpty(nuevoNombre))
             {
@@ -110,43 +151,47 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
 
             context.SaveChanges();
             Console.WriteLine("Curso editado exitosamente.\n");
-            Console.WriteLine("Presione una tecla para continuar...");
-            Console.ReadKey();
-
+            Program.Pausar();
         }
 
         public static void DeleteCourse()
         {
             Console.Clear();
             Console.WriteLine("Ingrese el ID del curso a eliminar: ");
-            string? input = Console.ReadLine();
-            if (string.IsNullOrEmpty(input))
-            {
-                Console.WriteLine("ID no proporcionado.");
-                return;
-            }
 
-            if (!int.TryParse(input, out int id))
+            if (!int.TryParse(Console.ReadLine(), out int idCurso))
             {
                 Console.WriteLine("ID inválido.");
                 return;
             }
 
             using var context = new DataContext();
-            {
-                var curso = context.Cursos.Find(id);
-                if (curso == null)
-                {
-                    Console.WriteLine("Curso no encontrado.");
-                    return;
-                }
-                context.Cursos.Remove(curso);
-                context.SaveChanges();
-                Console.WriteLine("Curso eliminado exitosamente.\n");
-                Console.WriteLine("Presione una tecla para continuar...");
-                Console.ReadKey();
 
+            var curso = context.Cursos.Include(c => c.Alumnos).FirstOrDefault(c => c.IdCurso == idCurso);
+
+            if (curso == null)
+            {
+                Console.WriteLine("Curso no encontrado.");
+                return;
             }
+
+            if (curso.Alumnos.Any())
+            {
+                Console.WriteLine("No se puede eliminar el curso porque tiene estudiantes inscritos.");
+                return;
+            }
+            Console.WriteLine($"¿Está seguro de que desea eliminar el curso '{curso.Nombre}'? (S/N): ");
+            var confirmacion = Console.ReadLine();
+            if (confirmacion?.ToUpper() != "S")
+            {
+                Console.WriteLine("Eliminación cancelada.");
+                return;
+            }
+
+            context.Cursos.Remove(curso);
+            context.SaveChanges();
+            Console.WriteLine("Curso eliminado exitosamente.\n");
+            Program.Pausar();
         }
     }
 }
