@@ -9,15 +9,13 @@ namespace Sistema_de_Gestion_de_asistencias.Domain
 {
     public class Curso
     {
-        [Key]
         public int IdCurso { get; set; }
-        [Required]
-        [MaxLength(25)]
+
         public required string Nombre { get; set; }
 
         public ICollection<Alumno> Alumnos { get; set; } = new List<Alumno>();
         public ICollection<Asistencia> Asistencias { get; set; } = new List<Asistencia>();
-        public ICollection<AsignacionDocente> Asignaciones { get; set; } = new List<AsignacionDocente>();
+        public ICollection<Clase> Clases { get; set; } = new List<Clase>();
 
         public Curso()
         {

@@ -17,7 +17,7 @@ namespace Sistema_de_Gestion_de_asistencias.Domain
         public required string Nombre { get; set; }
 
         public ICollection<Maestro> Maestros { get; set; } = new List<Maestro>();
-        public ICollection<AsignacionDocente> Asignaciones { get; set; } = new List<AsignacionDocente>();
+        public ICollection<Clase> Clases { get; set; } = new List<Clase>();
 
         public Materia()
         {
