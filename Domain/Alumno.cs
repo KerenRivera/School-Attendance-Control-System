@@ -11,16 +11,10 @@ using Microsoft.EntityFrameworkCore;
 namespace Sistema_de_Gestion_de_asistencias.Domain
 {
     [Index(nameof(Matricula), IsUnique = true)]
-    [Table("Alumnos")]
     public class Alumno : Persona
     {
-        //[Key]
-        //public int IdPersona { get; set; }
-        public int? IdCurso { get; set; }
+        public int IdCurso { get; set; }
         public int Matricula { get; set; }
-
-        //[ForeignKey("IdPersona")]
-        //public Persona Persona { get; set; } = null!; 
 
         [ForeignKey("IdCurso")]
         public Curso Curso { get; set; } = null!; 
