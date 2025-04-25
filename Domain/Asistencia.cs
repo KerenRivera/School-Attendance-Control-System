@@ -30,21 +30,6 @@ namespace Sistema_de_Gestion_de_asistencias.Domain
         public EstadoAsistencia Estado { get; set; }
         public DateTime Fecha { get; set; }
 
-        //public Asistencia(DateTime fecha, Alumno alumno, Curso curso, EstadoAsistencia estado)
-        //{
-        //    Fecha = fecha;
-        //    Alumno = alumno;
-        //    Curso = curso;
-        //    Estado = estado;
-        //}
-        //public Asistencia(Alumno alumno, Curso curso, EstadoAsistencia estado)
-        //{
-        //    Fecha = DateTime.Now;
-        //    Alumno = alumno;
-        //    Curso = curso;
-        //    Estado = estado;
-        //}
-
         public Asistencia()
         { }
     }
