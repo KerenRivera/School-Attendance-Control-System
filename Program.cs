@@ -26,13 +26,14 @@ namespace Sistema_de_Gestion_de_asistencias
                 Console.Write("2. Gestionar maestros\n");
                 Console.Write("3. Gestionar cursos\n");
                 Console.Write("4. Gestionar asistencias\n");
-                Console.Write("5. Gestionar clases\n");
-                Console.Write("6. Mostrar reporte de Asistencia semanal\n");
-                Console.Write("7. Salir\n");
+                Console.Write("5. Gestionar materias\n");
+                Console.Write("6. Gestionar clases\n");
+                Console.Write("7. Mostrar reporte de Asistencia semanal\n");
+                Console.Write("8. Salir\n");
                 Console.Write("Elige una opción: ");
 
                 if (!int.TryParse(Console.ReadLine(), out int choice))
-                { 
+                {
                     Console.WriteLine("Entrada inválida. Por favor, ingrese un número.");
                     continue;
                 }
@@ -52,12 +53,15 @@ namespace Sistema_de_Gestion_de_asistencias
                         AssistanceHelper.ShowSubmenu();
                         break;
                     case 5:
-                        Assignment_ProfessorHelper.ShowSubmenu();
+                        ClassHelper.ShowSubmenu();
                         break;
                     case 6:
-                        Report.ShowSubmenu();
+                        SubjectHelper.ShowSubmenu();
                         break;
                     case 7:
+                        Report.ShowSubmenu();
+                        break;
+                    case 8:
                         running = false;
                         Console.WriteLine("¡Gracias por usar el Sistema de Asistencia Escolar!");
                         break;
@@ -66,10 +70,18 @@ namespace Sistema_de_Gestion_de_asistencias
                         break;
                 }
             }
-
         }
-      
+
+            public static void Pausar()
+            {
+                Console.WriteLine("Presione una tecla para continuar...");
+                Console.ReadKey();
+            }
+
+
     }
 
 }
+
+
 
