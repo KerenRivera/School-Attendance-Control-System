@@ -9,6 +9,7 @@ namespace Sistema_de_Gestion_de_asistencias.Domain
 {
     public class Curso
     {
+        [Key]
         public int IdCurso { get; set; }
 
         public required string Nombre { get; set; }
