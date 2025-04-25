@@ -85,7 +85,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                 Alumno = alumno,
                 Curso = alumno.Curso,
                 Estado = estado,
-                Fecha = DateTime.Now
+                Fecha = DateTime.Today
             };
 
             context.Asistencias.Add(nuevaAsistencia);
