@@ -16,7 +16,7 @@ namespace Sistema_de_Gestion_de_asistencias.Persistence
         public DbSet<Maestro> Maestros { get; set; }
         public DbSet<Materia> Materias { get; set; }
         public DbSet<Asistencia> Asistencias { get; set; }
-        public DbSet<AsignacionDocente> AsignacionesDocente { get; set; }
+        public DbSet<Clase> Clases { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -26,13 +26,13 @@ namespace Sistema_de_Gestion_de_asistencias.Persistence
                 .ToTable("Personas");
 
             modelBuilder.Entity<Alumno>()
-                .ToTable("ALumnos");
+                .ToTable("Alumnos");
 
             modelBuilder.Entity<Maestro>()
                 .ToTable("Maestros");
 
-            modelBuilder.Entity<AsignacionDocente>()
-                .ToTable("AsignacionesDocente");
+            modelBuilder.Entity<Clase>()
+                .ToTable("Clases");
 
             modelBuilder.Entity<Asistencia>()
                 .HasOne(a => a.Alumno)
@@ -59,6 +59,14 @@ namespace Sistema_de_Gestion_de_asistencias.Persistence
             modelBuilder.Entity<Curso>();
 
             modelBuilder.Entity<Materia>();
+
+            modelBuilder.Entity<Asistencia>()
+                .Property(a => a.Estado)
+                .HasConversion(
+                    v => v.ToString()[0],
+                    v => (Asistencia.EstadoAsistencia)Enum.Parse(typeof(Asistencia.EstadoAsistencia), v.ToString())
+                )
+                .HasColumnType("char(1)");
 
         }
 
