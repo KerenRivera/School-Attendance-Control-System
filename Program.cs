@@ -1,6 +1,7 @@
 ﻿using System.Xml.Serialization;
 using Sistema_de_Gestion_de_asistencias.Domain;
 using Sistema_de_Gestion_de_asistencias.Helpers;
+using Microsoft.EntityFrameworkCore;
 using Sistema_de_Gestion_de_asistencias.Persistence;
 
 namespace Sistema_de_Gestion_de_asistencias
@@ -9,6 +10,16 @@ namespace Sistema_de_Gestion_de_asistencias
     {
         public static void Main(string[] args)
         {
+            var options = new DbContextOptionsBuilder<DataContext>()
+                .UseSqlServer("Server=localhost,1433;Database=SistemaAsistencia;User Id=sa;Password=Jw#ilovepizza9;TrustServerCertificate=True;")
+                .Options;
+
+            using (var context = new DataContext(options))
+            {
+                DataSeeder.Seed(context);
+            }
+
+            Console.WriteLine("Datos de prueba insertados.");
             MainMenu();
         }
 
