@@ -18,6 +18,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             bool salir = false;
             do
             {
+                Console.Clear();
                 Console.WriteLine("------------GESTION DE CLASES------------\n");
                 Console.WriteLine("1. Crear clase");
                 Console.WriteLine("2. Ver clases");
@@ -48,7 +49,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                         break;
                     case 5:
                         salir = true;
-                        Console.WriteLine("Volviendo al menu principal");
+                        Console.Clear();
                         break;
                     default:
                         Console.WriteLine("Opción no válida. Intente de nuevo.");
@@ -65,6 +66,13 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             
             var maestros = context.Maestros.ToList(); 
 
+            if(maestros.Count == 0)
+            {
+                Console.WriteLine("No hay maestros disponibles.");
+                Program.Pausar();
+                return;
+            }
+
             Console.WriteLine("Lista de maestros:");
             foreach (var m in maestros)
             {
@@ -73,13 +81,29 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
 
 
             Console.Write("ID del maestro: ");
-            if (!int.TryParse(Console.ReadLine(), out int idMaestro))
+            if (!int.TryParse(Console.ReadLine(), out int idMaestro)) 
             {
                 Console.WriteLine("ID del maestro no válido.");
+                Program.Pausar();
                 return;
-            }          
+            }
+
+            var maestro = context.Maestros.FirstOrDefault(m => m.IdPersona == idMaestro);
+            if (maestro == null)
+            {
+                Console.WriteLine("Maestro no encontrado.");
+                Program.Pausar();
+                return;
+            }
 
             var materias = context.Materias.ToList(); 
+
+            if (materias.Count == 0)
+            {
+                Console.WriteLine("No hay materias disponibles.");
+                Program.Pausar();
+                return;
+            }
 
             Console.WriteLine("Lista de materias:");
             foreach (var mat in materias)
@@ -92,11 +116,26 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             if (!int.TryParse(Console.ReadLine(), out int idMateria))
             {
                 Console.WriteLine("ID de la materia no válido.");
+                Program.Pausar();
+                return;
+            }
+            var materia = context.Materias.FirstOrDefault(m => m.IdMateria == idMateria);
+            if (materia == null)
+            {
+                Console.WriteLine("Materia no encontrada.");
+                Program.Pausar();
                 return;
             }
 
 
             var cursos = context.Cursos.ToList();
+
+            if (cursos.Count == 0)
+            {
+                Console.WriteLine("No hay cursos disponibles.");
+                Program.Pausar();
+                return;
+            }
 
             Console.WriteLine("Lista de cursos:");
             foreach (var c in cursos)
@@ -109,6 +148,15 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             if (!int.TryParse(Console.ReadLine(), out int idCurso))
             {
                 Console.WriteLine("ID del curso no válido.");
+                Program.Pausar();
+                return;
+            }
+
+            var curso = context.Cursos.FirstOrDefault(c => c.IdCurso == idCurso);
+            if (curso == null)
+            {
+                Console.WriteLine("Curso no encontrado.");
+                Program.Pausar();
                 return;
             }
 
@@ -117,6 +165,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             if (!DateTime.TryParse(Console.ReadLine(), out DateTime horario))
             {
                 Console.WriteLine("Horario no válido.");
+                Program.Pausar();
                 return;
             }
 
@@ -124,17 +173,6 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             Console.Write("¿Es titular? (S/N): ");
             string? inputEsTitular = Console.ReadLine();
             bool esTitular = inputEsTitular?.ToUpper() == "S";
-
-
-            var maestro = context.Maestros.FirstOrDefault(m => m.IdPersona == idMaestro);
-            var materia = context.Materias.FirstOrDefault(m => m.IdMateria == idMateria);
-            var curso = context.Cursos.FirstOrDefault(c => c.IdCurso == idCurso);
-
-            if (maestro == null || materia == null || curso == null)
-            {
-                Console.WriteLine("Error: Maestro, Materia o Curso no encontrado.");
-                return;
-            }
 
 
             var clase = new Clase
@@ -166,6 +204,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             if (!int.TryParse(Console.ReadLine(), out int opcionFiltro))
             {
                 Console.WriteLine("Opción no válida. Intente de nuevo.");
+                Program.Pausar();
                 return;
             }
 
@@ -181,10 +220,11 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                 {
                     case 1:
                         Console.Write("Ingrese la fecha (dd/MM/yyyy): ");
-                        string? inputFecha = Console.ReadLine();
+                        var inputFecha = Console.ReadLine();
                         if (!DateTime.TryParse(inputFecha, out var fecha))
                         {
                             Console.WriteLine("Fecha no válida. Intente de nuevo.");
+                            Program.Pausar();
                             return;
                         }
                         clases = clases.Where(c => c.Horario.Date == fecha.Date);
@@ -196,11 +236,13 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                         if (string.IsNullOrWhiteSpace(nombre))
                         {
                             Console.WriteLine("El nombre no puede estar vacío. Intente de nuevo.");
-                            return;
+                            Program.Pausar();
                         }
-                        clases = clases.Where(c => 
-                            (c.Maestro.Nombre + " " + c.Maestro.Apellido)
-                            .Contains(nombre, StringComparison.CurrentCultureIgnoreCase));
+                            nombre = nombre?? "" .ToLower();
+                            clases = clases.Where(c =>
+                                ((c.Maestro.Nombre ?? "").ToLower() + " " + (c.Maestro.Apellido?? "").ToLower())
+                                .Contains(nombre));
+
                         break;
 
                     case 3:
@@ -209,21 +251,20 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                         if (string.IsNullOrWhiteSpace(nombreCurso))
                         {
                             Console.WriteLine("El nombre del curso no puede estar vacío. Intente de nuevo.");
-                            return;
-                        }
-                        var curso = nombreCurso;
-                        clases = clases.Where(c =>
-                            c.Curso.Nombre.Contains(nombreCurso, StringComparison.CurrentCultureIgnoreCase));
+                            Program.Pausar();
 
-                        Console.Write("¿Es titular? (S/N): ");
-                        string? inputEsTitular = Console.ReadLine();
-                        if (string.IsNullOrEmpty(inputEsTitular))
-                        {
-                            Console.WriteLine("Entrada no válida. Intente de nuevo.");
-                            return;
                         }
-                        bool esTitular = inputEsTitular.Equals("S", StringComparison.CurrentCultureIgnoreCase);
-                        clases = clases.Where(c => c.EsTitular == esTitular);
+
+                        nombreCurso = nombreCurso?? "".ToLower();
+
+                        clases = clases.Where(c =>
+                            c.Curso.Nombre.ToLower().Contains(nombreCurso));
+
+                        if (clases.Any())
+                        {
+                            Console.WriteLine("No se encontraron clases para el curso especificado.");
+                            Program.Pausar();
+                        }
 
                         break;
                     case 4:
@@ -231,15 +272,17 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                         break;
                     default:
                         Console.WriteLine("Opción no válida. Intente de nuevo.");
+                        Program.Pausar();
                         return;
 
                 }
 
-                var lista = clases.ToList();
+                var lista = clases.AsEnumerable().ToList(); 
 
                 if (lista.Count == 0)
                 {
                     Console.WriteLine("No se encontraron clases.");
+                    Program.Pausar();
                     return;
                 }
 
@@ -260,16 +303,14 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
         public static void EditClass()
         {
             Console.Clear();
-
             using var context = new DataContext();
 
-            var clases = context.Clases.ToList();
-            Console.WriteLine("Ingrese el ID de la clase que desea editar");
-
+            Console.WriteLine("Ingrese el ID de la clase que desea editar: ");
             if (!int.TryParse(Console.ReadLine(), out int idClase))
             {
                 Console.WriteLine("ID de clase no válido.");
-                return;
+                Program.Pausar();
+                //return;
             }
 
             var clase = context.Clases
@@ -281,6 +322,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             if (clase == null)
             {
                 Console.WriteLine("Clase no encontrada.");
+                Program.Pausar();
                 return;
             }
 
@@ -328,6 +370,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                     else
                     {
                         Console.WriteLine("Materia no encontrada.");
+                        Program.Pausar();
                         return;
                     }
 
@@ -350,6 +393,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                 else
                 {
                     Console.WriteLine("Curso no encontrado.");
+                    Program.Pausar();
                     return;
                 }
             }
@@ -369,6 +413,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             if (!int.TryParse(Console.ReadLine(), out int idClase))
             {
                 Console.WriteLine("ID de clase no válido.");
+                Program.Pausar();
                 return;
             }
 
@@ -381,6 +426,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             if (clase == null)
             {
                 Console.WriteLine("Clase no encontrada.");
+                Program.Pausar();
                 return;
             }
 

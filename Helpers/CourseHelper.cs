@@ -21,6 +21,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             bool salir = false;
             do
             {
+                Console.Clear();
                 Console.WriteLine("------------GESTION DE CURSOS------------\n");
                 Console.WriteLine("1. Agregar curso\n");
                 Console.WriteLine("2. Ver cursos\n");

@@ -18,6 +18,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             bool salir = false;
             do
             {
+                Console.Clear();
                 Console.WriteLine("------------GESTION DE ALUMNOS------------\n");
                 Console.WriteLine("1. Agregar alumno\n");
                 Console.WriteLine("2. Ver alumno\n");
@@ -49,7 +50,8 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                         break;
                     case 5:
                         salir = true;
-                        Console.WriteLine("Regresando al menú principal...");
+                        //Console.WriteLine("Regresando al menú principal...");                       
+                        Console.Clear();
                         break;
                     default:
                         Console.WriteLine("Opción no válida. Por favor, elija una opción válida.");
@@ -68,6 +70,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             if (string.IsNullOrEmpty(nombre))
             {
                 Console.WriteLine("El nombre no puede estar vacío.");
+                Program.Pausar();
                 return;
             }
 
@@ -76,6 +79,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             if (string.IsNullOrEmpty(apellido))
             {
                 Console.WriteLine("El apellido no puede estar vacío.");
+                Program.Pausar();
                 return;
             }
 
@@ -83,26 +87,37 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             if (!int.TryParse(Console.ReadLine(), out int matricula))
             {
                 Console.WriteLine("Matricula no válida.");
+                Program.Pausar();
                 return;
             }
 
             if (context.Alumnos.Any(a => a.Matricula == matricula))
             {
                 Console.WriteLine("La matricula ya existe. Por favor, ingrese una matricula única.");
+                Program.Pausar();
                 return;
             }
 
-            Console.WriteLine("Cursos disponibles: ");
             var cursos = context.Cursos.ToList();
+            if (cursos.Count == 0)
+            {
+                Console.WriteLine("No hay cursos disponibles. Por favor, Cree un curso primero.");
+                Program.Pausar();
+                return;
+            }
+
+            Console.WriteLine("Cursos disponibles:");
             foreach (var curso in cursos)
             {
                 Console.WriteLine($"ID: {curso.IdCurso}, Nombre: {curso.Nombre}");
             }
 
+
             Console.Write("Ingrese el ID del curso asignado: ");
             if (!int.TryParse(Console.ReadLine(), out int idCurso))
             {
                 Console.WriteLine("ID de curso no válido.");
+                Program.Pausar();
                 return;
             }
 
@@ -110,6 +125,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             if (cursoSeleccionado == null)
             {
                 Console.WriteLine("Curso no encontrado.");
+                Program.Pausar();
                 return;
             }
 
@@ -123,9 +139,17 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                 IdCurso = idCurso
             };
 
-            context.Alumnos.Add(alumno);
-            context.SaveChanges();
-            Console.WriteLine("Alumno agregado exitosamente.");
+            try
+            {
+                context.Alumnos.Add(alumno);
+                context.SaveChanges();
+                Console.WriteLine("Alumno agregado exitosamente.");
+            }
+            catch (DbUpdateException ex)
+            {
+                Console.WriteLine("Error: El curso no existe.");
+            }
+           
             Program.Pausar();
         }
 
@@ -138,10 +162,19 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                 .Include(a => a.Curso)
                 .ToList();
 
-            Console.WriteLine("Lista de alumnos:");
-            foreach (var alumno in alumnos)
+            if (alumnos.Count == 0)
             {
-                Console.WriteLine($"ID: {alumno.IdPersona}Nombre: {alumno.Nombre}, Apellido: {alumno.Apellido}, Matricula: {alumno.Matricula}, Curso: {alumno.Curso.Nombre}");
+                Console.WriteLine("No hay alumnos registrados.");
+                Program.Pausar();
+                return;
+            }
+
+            {
+                Console.WriteLine("Lista de alumnos:");
+                foreach (var alumno in alumnos)
+                {
+                    Console.WriteLine($"ID: {alumno.IdPersona}Nombre: {alumno.Nombre}, Apellido: {alumno.Apellido}, Matricula: {alumno.Matricula}, Curso: {alumno.Curso.Nombre}");
+                }
             }
             Program.Pausar();
         }
@@ -151,6 +184,13 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             Console.Clear();
             using var context = new DataContext();
             var alumnos = context.Alumnos.ToList();
+
+            if (alumnos.Count == 0)
+            {
+                Console.WriteLine("No hay alumnos registrados.");
+                Program.Pausar();
+                return;
+            }
 
             Console.Write("Ingrese la matricula del alumno a editar: ");
             var matriculaInput = Console.ReadLine();
@@ -191,7 +231,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             var nuevoIDCurso = Console.ReadLine();
             if (!int.TryParse(nuevoIDCurso, out int idCurso))
             {
-                alumno.IdCurso = int.Parse(nuevoIDCurso);
+                alumno.IdCurso = int.Parse(nuevoIDCurso??"");
             }
 
 
@@ -199,7 +239,6 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             Console.WriteLine("Alumno editado exitosamente.");
             Program.Pausar();
 
-            }
         }
                  
 
@@ -209,12 +248,19 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             using var context = new DataContext();
             var alumnos = context.Alumnos.ToList();
 
+            if (alumnos.Count == 0)
+            {
+                Console.WriteLine("No hay alumnos registrados.");
+                Program.Pausar();
+                return;
+            }
+
             Console.Write("Ingrese la matricula del alumno a eliminar: ");
             var matriculaInput = Console.ReadLine();
             if (!int.TryParse(matriculaInput, out int matricula))
             {
                 Console.WriteLine("Matricula no válida.");
-                return;
+                Program.Pausar(); //chequear
             }
    
             var alumno = context.Alumnos.Include(a => a.Curso).FirstOrDefault(a => a.Matricula == matricula);

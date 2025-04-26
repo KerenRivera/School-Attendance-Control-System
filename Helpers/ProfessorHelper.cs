@@ -49,7 +49,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                         break;
                     case 5:
                         salir = true;
-                        Console.WriteLine("Regresando al menú principal...");
+                        Console.Clear();
                         break;
                     default:
                         Console.WriteLine("Opción no válida. Por favor, elija una opción válida.");
@@ -80,18 +80,28 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                 return;
             }
 
-            Console.WriteLine("Materias disponibles:");
             var materias = context.Materias.ToList();
+
+            if (materias.Count == 0)
+            {
+                Console.WriteLine("No hay materias disponibles actualmente. Por favor cree un curso primero.");
+                Program.Pausar();
+                return;
+            }
+            
+            
+            Console.WriteLine("Materias disponibles:");
             foreach (var m in materias)
             {
                 Console.WriteLine($"Id: {m.IdMateria}, Nombre: {m.Nombre}");
             }
-
+           
 
             Console.Write("Ingrese el Id de la materia que impartirá: ");
-            if (!int.TryParse(Console.ReadLine(), out int idMateria))
+            if (!int.TryParse(Console.ReadLine(), out int idMateria)) //chequear
             {
                 Console.WriteLine("El Id de la materia debe ser un número válido.");
+                Program.Pausar();
                 return;
             }
 
@@ -99,6 +109,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             if (materia == null)
             {
                 Console.WriteLine("La materia no existe.");
+                Program.Pausar();
                 return;
             }
 
@@ -115,10 +126,11 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
 
             Console.WriteLine("Maestro agregado exitosamente.");
             Program.Pausar();
+            return;
 
         }
 
-        public static void ReadProfessor()
+        public static void ReadProfessor() //chequear
         {
             Console.Clear();
             using var context = new DataContext();
@@ -127,6 +139,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             if (maestros.Count == 0)
             {
                 Console.WriteLine("No hay maestros registrados.");
+                Program.Pausar();
                 return;
             }
 
@@ -134,19 +147,21 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             Console.WriteLine("Lista de maestros:");
             foreach (var maestro in maestros)
             {
-                Console.WriteLine($"ID: {maestro.IdPersona}, Nombre: {maestro.Nombre}, Apellido: {maestro.Apellido}, Materia: {maestro.Materia.Nombre}");
+                Console.WriteLine($"ID: {maestro.IdPersona}, Nombre: {maestro.Nombre}, Apellido: {maestro.Apellido}");
             }
             Program.Pausar();
+            return;
         }
 
         public static void EditProfessor()
         {
             Console.Clear();
             Console.Write("Ingrese el ID del maestro a editar: ");
-            if (!int.TryParse(Console.ReadLine(), out int idMaestro))
+            if (!int.TryParse(Console.ReadLine(), out int idMaestro)) //chequear
             {
                 Console.WriteLine("El ID ingresado no es válido.");
-                return;
+                Program.Pausar();
+                return; 
             }
 
             using var context = new DataContext();
@@ -155,6 +170,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             if (maestro == null)
             {
                 Console.WriteLine("Maestro no encontrado.");
+                Program.Pausar();
                 return;
             }
             else
@@ -188,6 +204,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                     else
                     {
                         Console.WriteLine("La materia no existe.");
+                        Program.Pausar();
                         return;
                     }
 
@@ -202,10 +219,11 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
         public static void DeleteProfessor()
         {
             Console.Clear();
-            Console.Write("Ingrese el ID del maestro a eliminar: ");
-            if (!int.TryParse(Console.ReadLine(), out int idMaestro))
+            Console.WriteLine("ID del maestro a eliminar:");
+            if (!int.TryParse(Console.ReadLine(), out int idMaestro)) //chequear
             {
                 Console.WriteLine("El ID ingresado no es válido.");
+                Program.Pausar();
                 return;
             }
 
@@ -215,6 +233,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             if (maestro == null)
             {
                 Console.WriteLine("Maestro no encontrado.");
+                Program.Pausar();
                 return;
             }
             

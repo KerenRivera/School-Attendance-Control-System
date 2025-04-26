@@ -36,14 +36,13 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                         break;
                     case 2:
                         salir = true;
-                        Console.WriteLine("Volviendo al menú principal");
                         break;
                     default:
                         Console.WriteLine("Opción no válida.Intente de nuevo.");
                         Console.ReadKey();
                         break;
                 }
-            }   while (salir != false);
+            }   while (!salir);
         }
 
         public static void WeeklyAssisttanceReport()
@@ -72,7 +71,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                 if (asistencias.Count == 0)
                 {
                     Console.WriteLine("No hay registros para esta semana.");
-                    Console.ReadKey();
+                    Program.Pausar();
                     return;
                 }
 

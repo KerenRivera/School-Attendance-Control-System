@@ -18,7 +18,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             bool salir = false;
             do
             {
-                //Console.Clear();
+                Console.Clear();
                 Console.WriteLine("------------GESTION DE ASISTENCIAS------------\n");
                 Console.WriteLine("1. Registrar Asistencia\n");
                 Console.WriteLine("2. Visualizar el historial de asistencias\n");
@@ -49,7 +49,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                         break;
                     case 5:
                         salir = true;
-                        Console.WriteLine("Regresando al menú principal");
+                        Console.Clear(); 
                         break;
                     default:
                         Console.WriteLine("Opción no válida. Por favor, elija una opción válida.");
@@ -66,6 +66,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             if (!int.TryParse(Console.ReadLine(), out int matricula))
             {
                 Console.WriteLine("Entrada inválida. Por favor, ingrese un número válido.");
+                Program.Pausar();
                 return;
             }
 
@@ -75,6 +76,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             if (alumno == null)
             {
                 Console.WriteLine("Alumno no encontrado");
+                Program.Pausar();
                 return;
             }
 
@@ -95,6 +97,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
 
             Console.WriteLine("Asistencia registrada exitosamente.\n");
             Program.Pausar();
+            return;
 
         }
 
@@ -115,12 +118,11 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
                     return;
                 }
 
-                    foreach (var a in asistencias)
+                foreach (var a in asistencias)
                 {
                     Console.WriteLine($"Alumno: {a.Alumno.Nombre} {a.Alumno.Apellido} | Curso: {a.Curso.Nombre} | Estado: {a.Estado} | Fecha: {a.Fecha}");
                 }
-                Console.WriteLine("Presione una tecla para continuar...");
-                Console.ReadKey();
+                Program.Pausar();
 
 
             }
@@ -134,6 +136,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             if (!int.TryParse(Console.ReadLine(), out int matricula))
             {
                 Console.WriteLine("Matricula inválida.");
+                Program.Pausar();
                 return;
             }
 
@@ -147,6 +150,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             if (!asistencias.Any())
             {
                 Console.WriteLine("Este estudiante aún no tiene asistencias registradas.");
+                Program.Pausar();
                 return;
             }
 
@@ -160,6 +164,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             if (!int.TryParse(Console.ReadLine(), out int asistenciaIndex) || asistenciaIndex < 1 || asistenciaIndex > asistencias.Count)
             {
                 Console.WriteLine("Número de asistencia inválido.");
+                Program.Pausar();
                 return;
             }
 
@@ -171,6 +176,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
 
             Console.WriteLine("Asistencia editada exitosamente.");
             Program.Pausar();
+            return;
 
         }
 
@@ -181,6 +187,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             if (!int.TryParse(Console.ReadLine(), out int matricula))
             {
                 Console.WriteLine("Matricula inválida.");
+                Program.Pausar();
                 return;
             }
 
@@ -195,6 +202,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             if (!asistencias.Any())
             {
                 Console.WriteLine("Este estudiante aún no tiene asistencias registradas.");
+                Program.Pausar();
                 return;
             }
 
@@ -210,6 +218,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
             if (!int.TryParse(Console.ReadLine(), out int asistenciaIndex) || asistenciaIndex < 1 || asistenciaIndex > asistencias.Count)
             {
                 Console.WriteLine("Número de asistencia inválido.");
+                Program.Pausar();
                 return;
             }
 
@@ -219,6 +228,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
 
             Console.WriteLine("Asistencia eliminada exitosamente.");
             Program.Pausar();
+            return;
         }
 
         public static bool TryGetEstado(out EstadoAsistencia estado)
