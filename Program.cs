@@ -1,5 +1,7 @@
 ﻿using System.Xml.Serialization;
+using Sistema_de_Gestion_de_asistencias.Domain;
 using Sistema_de_Gestion_de_asistencias.Helpers;
+using Sistema_de_Gestion_de_asistencias.Persistence;
 
 namespace Sistema_de_Gestion_de_asistencias
 {
@@ -30,7 +32,7 @@ namespace Sistema_de_Gestion_de_asistencias
                 Console.Write("6. Gestionar clases\n");
                 Console.Write("7. Mostrar reporte de Asistencia semanal\n");
                 Console.Write("8. Salir\n");
-                Console.Write("Elige una opción: ");
+                Console.Write("Seleccioné una opción: ");
 
                 if (!int.TryParse(Console.ReadLine(), out int choice))
                 {
@@ -53,10 +55,10 @@ namespace Sistema_de_Gestion_de_asistencias
                         AssistanceHelper.ShowSubmenu();
                         break;
                     case 5:
-                        ClassHelper.ShowSubmenu();
+                        SubjectHelper.ShowSubmenu();
                         break;
                     case 6:
-                        SubjectHelper.ShowSubmenu();
+                        ClassHelper.ShowSubmenu();
                         break;
                     case 7:
                         Report.ShowSubmenu();
@@ -72,16 +74,20 @@ namespace Sistema_de_Gestion_de_asistencias
             }
         }
 
-            public static void Pausar()
-            {
-                Console.WriteLine("Presione una tecla para continuar...");
-                Console.ReadKey();
-            }
-
-
+        public static void Pausar()
+        {
+            Console.WriteLine("Presione una tecla para continuar...");
+            Console.ReadKey();
+        }
     }
-
 }
+
+           
+
+
+    
+
+
 
 
 

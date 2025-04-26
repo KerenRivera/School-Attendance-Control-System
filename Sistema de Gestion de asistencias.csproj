@@ -8,6 +8,12 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="School-Attendance-Control-System\**" />
+    <EmbeddedResource Remove="School-Attendance-Control-System\**" />
+    <None Remove="School-Attendance-Control-System\**" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.30.2" />
@@ -18,6 +24,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>
