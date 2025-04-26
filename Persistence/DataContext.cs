@@ -5,11 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Sistema_de_Gestion_de_asistencias.Domain;
+using Microsoft.Extensions.Options;
 
 namespace Sistema_de_Gestion_de_asistencias.Persistence
 {
     public class DataContext : DbContext
     {
+
         public DbSet<Persona> Personas { get; set; }
         public DbSet<Alumno> Alumnos { get; set; }
         public DbSet<Curso> Cursos { get; set; }
@@ -17,6 +19,17 @@ namespace Sistema_de_Gestion_de_asistencias.Persistence
         public DbSet<Materia> Materias { get; set; }
         public DbSet<Asistencia> Asistencias { get; set; }
         public DbSet<Clase> Clases { get; set; }
+
+        public DataContext(DbContextOptions<DataContext> options) 
+            : base(options)
+        {
+        }
+
+        public DataContext() : base()
+        {
+            
+        }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
