@@ -130,7 +130,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
 
         }
 
-        public static void ReadProfessor() //chequear
+        public static void ReadProfessor() 
         {
             Console.Clear();
             using var context = new DataContext();
@@ -157,7 +157,7 @@ namespace Sistema_de_Gestion_de_asistencias.Helpers
         {
             Console.Clear();
             Console.Write("Ingrese el ID del maestro a editar: ");
-            if (!int.TryParse(Console.ReadLine(), out int idMaestro)) //chequear
+            if (!int.TryParse(Console.ReadLine(), out int idMaestro)) 
             {
                 Console.WriteLine("El ID ingresado no es válido.");
                 Program.Pausar();
