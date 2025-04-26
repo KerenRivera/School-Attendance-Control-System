@@ -55,11 +55,7 @@ namespace Sistema_de_Gestion_de_asistencias.Persistence
                 .HasOne(p => p.Maestro)
                 .WithOne()
                 .HasForeignKey<Maestro>(m => m.IdPersona);
-
-            modelBuilder.Entity<Curso>();
-
-            modelBuilder.Entity<Materia>();
-
+                
             modelBuilder.Entity<Asistencia>()
                 .Property(a => a.Estado)
                 .HasConversion(
